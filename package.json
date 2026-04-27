@@ -2,6 +2,7 @@
   "name": "ems-root",
   "version": "1.0.0",
   "scripts": {
+    "preinstall": "npm install --prefix backend",
     "start": "npm run start --prefix backend",
     "backend-install": "npm install --prefix backend",
     "frontend-install": "npm install --prefix frontend",
