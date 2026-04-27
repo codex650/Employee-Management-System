@@ -1,45 +1,64 @@
 const mongoose = require('mongoose');
 const User = require('../models/User');
 const Employee = require('../models/Employee');
+const Department = require('../models/Department');
+const Designation = require('../models/Designation');
 const connectDB = require('../config/db');
 require('dotenv').config();
 
 const seedManager = async () => {
     try {
         await connectDB();
+        console.log('Connected for seeding...');
 
-        // Check if user or employee already exists
-        const adminExists = await User.findOne({ email: 'admin@ems.com' });
-        const employeeExists = await Employee.findOne({ email: 'admin@ems.com' });
+        const email = 'admin@ems.com';
+        const password = 'Admin123!';
 
-        if (adminExists || employeeExists) {
-            console.log('Admin user or employee document already exists.');
-            process.exit();
+        // 1. Cleanup check
+        const adminExists = await User.findOne({ email });
+        if (adminExists) {
+            console.log('Admin user already exists. Skipping...');
+            process.exit(0);
         }
 
-        // Create Employee document first
+        // 2. Ensure Department & Designation exist (Relational fix)
+        let dept = await Department.findOne({ name: 'IT' });
+        if (!dept) dept = await Department.create({ name: 'IT', description: 'Information Technology' });
+
+        let desig = await Designation.findOne({ name: 'System Administrator' });
+        if (!desig) desig = await Designation.create({ name: 'System Administrator', departmentId: dept._id });
+
+        // 3. Create Employee
         const employee = await Employee.create({
             firstName: 'System',
-            lastName: 'Administrator',
-            email: 'admin@ems.com',
-            phone: '0000000000',
-            department: 'IT',
-            position: 'System Administrator',
-            hireDate: new Date()
+            lastName: 'Admin',
+            email: email,
+            phone: '1234567890',
+            department: dept._id,
+            position: desig._id,
+            hireDate: new Date(),
+            status: 'active'
         });
 
-        // Create User document with reference to employeeId
+        // 4. Create User (Manager role)
         await User.create({
-            email: 'admin@ems.com',
-            password: 'Admin123!',
+            email,
+            password,
             role: 'manager',
-            employeeId: employee._id
+            employeeId: employee._id,
+            isVerified: true // Auto-verify so user can log in
         });
 
-        console.log('Manager user seeded successfully.');
-        process.exit();
+        console.log(`-----------------------------------`);
+        console.log(`Success! Manager Account Created:`);
+        console.log(`Email: ${email}`);
+        console.log(`Password: ${password}`);
+        console.log(`Role: manager (FULL ACCESS)`);
+        console.log(`-----------------------------------`);
+
+        process.exit(0);
     } catch (error) {
-        console.error(`Error: ${error.message}`);
+        console.error(`Error during seeding: ${error.message}`);
         process.exit(1);
     }
 };
