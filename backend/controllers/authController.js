@@ -19,10 +19,12 @@ const register = async (req, res) => {
             employeeData = JSON.parse(employeeData);
         }
 
-        // Check if user already exists
+        // Check if user or employee already exists
         const userExists = await User.findOne({ email });
-        if (userExists) {
-            return res.status(400).json({ message: 'User already exists' });
+        const employeeExists = await Employee.findOne({ email: employeeData.email || email });
+        
+        if (userExists || employeeExists) {
+            return res.status(400).json({ message: 'User or Employee record with this email already exists' });
         }
 
         // Create Employee document first

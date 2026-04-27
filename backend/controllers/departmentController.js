@@ -42,6 +42,9 @@ const updateDepartment = async (req, res) => {
         }
         res.status(200).json({ success: true, department });
     } catch (error) {
+        if (error.code === 11000) {
+            return res.status(400).json({ success: false, message: 'Department with this name already exists' });
+        }
         res.status(500).json({ success: false, message: error.message });
     }
 };

@@ -23,4 +23,7 @@ const designationSchema = new mongoose.Schema({
     timestamps: true
 });
 
+// Prevent duplicate designation names within the same department
+designationSchema.index({ name: 1, departmentId: 1 }, { unique: true });
+
 module.exports = mongoose.model('Designation', designationSchema);

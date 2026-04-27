@@ -29,6 +29,9 @@ const createDesignation = async (req, res) => {
         const designation = await Designation.create({ name, departmentId, description });
         res.status(201).json({ success: true, designation });
     } catch (error) {
+        if (error.code === 11000) {
+            return res.status(400).json({ success: false, message: 'This designation already exists in this department' });
+        }
         res.status(500).json({ success: false, message: error.message });
     }
 };
@@ -47,6 +50,9 @@ const updateDesignation = async (req, res) => {
         }
         res.status(200).json({ success: true, designation });
     } catch (error) {
+        if (error.code === 11000) {
+            return res.status(400).json({ success: false, message: 'This designation name already exists in this department' });
+        }
         res.status(500).json({ success: false, message: error.message });
     }
 };
