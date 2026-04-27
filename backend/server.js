@@ -17,6 +17,9 @@ initCronJobs();
 
 const app = express();
 
+// Trust proxy for Railway/Deployment
+app.set('trust proxy', 1);
+
 // Security Middleware
 app.use(helmet()); // Set security HTTP headers
 app.use(mongoSanitize()); // Prevent NoSQL injection
