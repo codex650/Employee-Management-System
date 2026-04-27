@@ -195,4 +195,38 @@ router.get('/verify', protect, verify);
  */
 router.post('/register', protect, authorize('manager'), upload.single('image'), register);
 
+/**
+ * @swagger
+ * /api/auth/database-cleanup:
+ *   get:
+ *     summary: Internal cleanup of duplicate designations (Manager only)
+ *     tags: [Internal]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Cleanup results
+ */
+router.get('/database-cleanup', protect, authorize('manager'), async (req, res) => {
+    try {
+        const Designation = require('../models/Designation');
+        const designations = await Designation.find({ active: true });
+        const seen = new Set();
+        let deletedCount = 0;
+
+        for (const des of designations) {
+            const key = `${des.name.toLowerCase()}-${des.departmentId.toString()}`;
+            if (seen.has(key)) {
+                await Designation.findByIdAndDelete(des._id);
+                deletedCount++;
+            } else {
+                seen.add(key);
+            }
+        }
+        res.json({ success: true, message: `Cleanup complete. Removed ${deletedCount} duplicates.` });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 module.exports = router;
