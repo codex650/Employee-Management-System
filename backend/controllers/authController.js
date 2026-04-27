@@ -274,8 +274,7 @@ const forgotPassword = async (req, res) => {
         const user = await User.findOne({ email }).populate('employeeId');
 
         if (!user) {
-            // Don't reveal if user exists, just send same success message
-            return res.status(200).json({ success: true, message: 'If an account exists, an OTP has been sent.' });
+            return res.status(404).json({ success: false, message: 'No account found with this email address.' });
         }
 
         const resetOTP = Math.floor(100000 + Math.random() * 900000).toString();
@@ -286,7 +285,7 @@ const forgotPassword = async (req, res) => {
         const firstName = user.employeeId ? user.employeeId.firstName : 'User';
         await sendPasswordResetEmail(user.email, firstName, resetOTP);
 
-        res.status(200).json({ success: true, message: 'If an account exists, an OTP has been sent.' });
+        res.status(200).json({ success: true, message: 'Password reset OTP has been sent to your email.' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
