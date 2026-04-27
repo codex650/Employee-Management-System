@@ -8,6 +8,8 @@ const {
 const { protect } = require('../middleware/authMiddleware');
 const { authorize } = require('../middleware/roleMiddleware');
 
+const router = express.Router();
+
 /**
  * @swagger
  * tags:
@@ -22,7 +24,7 @@ const { authorize } = require('../middleware/roleMiddleware');
  *     summary: Get all designations
  *     tags: [Designations]
  *     security:
-+ *       - bearerAuth: []
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of all designations
