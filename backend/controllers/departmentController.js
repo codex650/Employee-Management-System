@@ -18,6 +18,19 @@ const getDepartments = async (req, res) => {
 const createDepartment = async (req, res) => {
     try {
         const { name, description } = req.body;
+
+        // Case-insensitive check
+        const existingDept = await Department.findOne({
+            name: { $regex: new RegExp(`^${name}$`, 'i') }
+        });
+
+        if (existingDept) {
+            return res.status(400).json({ 
+                success: false, 
+                message: `Department "${name}" already exists.` 
+            });
+        }
+
         const department = await Department.create({ name, description });
         res.status(201).json({ success: true, department });
     } catch (error) {

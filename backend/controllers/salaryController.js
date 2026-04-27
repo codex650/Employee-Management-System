@@ -154,8 +154,26 @@ const getSalaryHistory = async (req, res) => {
 const addBonus = async (req, res) => {
     try {
         const { amount, type, reason, payrollMonth, payrollYear } = req.body;
+        const employeeId = req.params.employeeId;
+
+        // Prevent exact duplicate bonus for the same period
+        const existingBonus = await Bonus.findOne({
+            employeeId,
+            type,
+            amount,
+            payrollMonth,
+            payrollYear
+        });
+
+        if (existingBonus) {
+            return res.status(400).json({ 
+                success: false, 
+                message: `An identical bonus of type "${type}" has already been added for this period.` 
+            });
+        }
+
         const bonus = await Bonus.create({
-            employeeId: req.params.employeeId,
+            employeeId,
             amount,
             type,
             reason,

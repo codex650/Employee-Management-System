@@ -26,6 +26,20 @@ const getDesignations = async (req, res) => {
 const createDesignation = async (req, res) => {
     try {
         const { name, departmentId, description } = req.body;
+
+        // 1. Case-insensitive check for existing designation in the same department
+        const existingDesignation = await Designation.findOne({
+            name: { $regex: new RegExp(`^${name}$`, 'i') },
+            departmentId: departmentId
+        });
+
+        if (existingDesignation) {
+            return res.status(400).json({ 
+                success: false, 
+                message: `The designation "${name}" already exists in this department.` 
+            });
+        }
+
         const designation = await Designation.create({ name, departmentId, description });
         res.status(201).json({ success: true, designation });
     } catch (error) {
