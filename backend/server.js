@@ -61,6 +61,7 @@ const salaryRoutes = require('./routes/salaryRoutes');
 const documentRoutes = require('./routes/documentRoutes');
 const departmentRoutes = require('./routes/departmentRoutes');
 const designationRoutes = require('./routes/designationRoutes');
+const profileRoutes = require('./routes/profileRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/employees', employeeRoutes);
@@ -71,6 +72,7 @@ app.use('/api/documents', documentRoutes);
 app.use('/api/departments', departmentRoutes);
 app.use('/api/designations', designationRoutes);
 app.use('/api/notifications', require('./routes/notificationRoutes'));
+app.use('/api/profile', profileRoutes);
 
 // 404 Handler
 app.use((req, res) => {

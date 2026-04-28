@@ -37,6 +37,13 @@ const userSchema = new mongoose.Schema({
     },
     lockUntil: {
         type: Number
+    },
+    preferences: {
+        theme: {
+            type: String,
+            enum: ['light', 'dark'],
+            default: 'light'
+        }
     }
 }, {
     timestamps: true

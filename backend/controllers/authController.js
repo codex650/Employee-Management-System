@@ -79,7 +79,13 @@ const login = async (req, res) => {
         const { email, password } = req.body;
 
         // Find user by email and populate employeeId
-        const user = await User.findOne({ email }).populate('employeeId');
+        const user = await User.findOne({ email }).populate({
+            path: 'employeeId',
+            populate: [
+                { path: 'department' },
+                { path: 'position' }
+            ]
+        });
 
         if (!user) {
             return res.status(401).json({ message: 'Invalid email or password' });
@@ -161,7 +167,13 @@ const login = async (req, res) => {
 // @access  Private
 const getMe = async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).populate('employeeId');
+        const user = await User.findById(req.user._id).populate({
+            path: 'employeeId',
+            populate: [
+                { path: 'department' },
+                { path: 'position' }
+            ]
+        });
         if (user) {
             res.json({
                 user: {

@@ -66,7 +66,12 @@ const employeeSchema = new mongoose.Schema({
         type: String,
         enum: ['bank_transfer', 'cash', 'check'],
         default: 'bank_transfer'
-    }
+    },
+    emergencyContacts: [{
+        name: { type: String, required: true },
+        relationship: { type: String, required: true },
+        phone: { type: String, required: true }
+    }]
 }, {
     timestamps: true
 });
