@@ -47,7 +47,7 @@ const createDepartment = async (req, res) => {
 const updateDepartment = async (req, res) => {
     try {
         const department = await Department.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
+            returnDocument: 'after',
             runValidators: true
         });
         if (!department) {
@@ -67,7 +67,7 @@ const updateDepartment = async (req, res) => {
 // @access  Private/Manager
 const deleteDepartment = async (req, res) => {
     try {
-        const department = await Department.findByIdAndUpdate(req.params.id, { active: false }, { new: true });
+        const department = await Department.findByIdAndUpdate(req.params.id, { active: false }, { returnDocument: 'after' });
         if (!department) {
             return res.status(404).json({ success: false, message: 'Department not found' });
         }

@@ -56,7 +56,7 @@ const createDesignation = async (req, res) => {
 const updateDesignation = async (req, res) => {
     try {
         const designation = await Designation.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
+            returnDocument: 'after',
             runValidators: true
         });
         if (!designation) {
@@ -76,7 +76,7 @@ const updateDesignation = async (req, res) => {
 // @access  Private/Manager
 const deleteDesignation = async (req, res) => {
     try {
-        const designation = await Designation.findByIdAndUpdate(req.params.id, { active: false }, { new: true });
+        const designation = await Designation.findByIdAndUpdate(req.params.id, { active: false }, { returnDocument: 'after' });
         if (!designation) {
             return res.status(404).json({ success: false, message: 'Designation not found' });
         }

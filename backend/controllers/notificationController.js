@@ -45,7 +45,7 @@ const markAsRead = async (req, res) => {
         const notification = await Notification.findOneAndUpdate(
             { _id: req.params.id, userId: req.user._id },
             { read: true, readAt: Date.now() },
-            { new: true }
+            { returnDocument: 'after' }
         );
 
         if (!notification) {
@@ -99,7 +99,7 @@ const updatePreferences = async (req, res) => {
                     ...(inAppNotifications && { inAppNotifications })
                 } 
             },
-            { new: true, upsert: true }
+            { returnDocument: 'after', upsert: true }
         );
         res.json({ success: true, message: 'Preferences updated', preferences: prefs });
     } catch (error) {
